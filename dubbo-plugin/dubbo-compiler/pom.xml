@@ -34,6 +34,9 @@
     <skip_maven_deploy>false</skip_maven_deploy>
     <graalvm.version>21.0.1</graalvm.version>
     <java.version>21</java.version>
+    <protobuf.version>4.30.0</protobuf.version>
+    <os.plugin.version>1.7.0</os.plugin.version>
+    <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
   </properties>
 
   <dependencies>
@@ -76,23 +79,57 @@
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>3.22.3</version>
+      <version>${protobuf.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protoc</artifactId>
-      <version>3.22.3</version>
+      <version>${protobuf.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java-util</artifactId>
-      <version>3.22.3</version>
+      <version>${protobuf.version}</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.xolstice.maven.plugins</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>${protobuf.plugin.version}</version>
+        <configuration>
+          <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+          <pluginId>grpc-java</pluginId>
+          <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
+          <outputDirectory>${project.build.directory}/generated-sources/protobuf/java</outputDirectory>
+          <clearOutputDirectory>false</clearOutputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>compile-custom</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>${os.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>detect</goal>
+            </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -118,14 +155,20 @@
       <plugin>
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
-        <version>0.9.28</version>
+        <version>0.10.5</version>
         <extensions>true</extensions>
         <configuration>
           <mainClass>org.apache.dubbo.gen.tri.Dubbo3TripleGenerator</mainClass>
           <buildArgs>
             <buildArg>--no-fallback</buildArg>
             <buildArg>--enable-url-protocols=https</buildArg>
+            <buildArg>--initialize-at-build-time=com.google.common</buildArg>
+            <buildArg>--initialize-at-run-time=com.google.protobuf</buildArg>
+            <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+            <buildArg>-H:ReflectionConfigurationFiles=${project.basedir}/src/main/resources/META-INF/native-image/reflection-config.json</buildArg>
           </buildArgs>
+          <imageName>${project.artifactId}</imageName>
+          <skipNativeBuild>false</skipNativeBuild>
         </configuration>
         <executions>
           <execution>
