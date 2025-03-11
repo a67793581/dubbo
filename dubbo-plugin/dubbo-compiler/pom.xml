@@ -96,6 +96,50 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.apache.dubbo.gen.tri.Dubbo3TripleGenerator</mainClass>
+                </transformer>
+              </transformers>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.graalvm.buildtools</groupId>
+        <artifactId>native-maven-plugin</artifactId>
+        <version>0.9.28</version>
+        <extensions>true</extensions>
+        <configuration>
+          <mainClass>org.apache.dubbo.gen.tri.Dubbo3TripleGenerator</mainClass>
+          <buildArgs>
+            <buildArg>--no-fallback</buildArg>
+            <buildArg>--enable-url-protocols=https</buildArg>
+          </buildArgs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-native</id>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerArgument>-proc:none</compilerArgument>
