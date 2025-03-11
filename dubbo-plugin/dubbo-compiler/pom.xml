@@ -37,6 +37,7 @@
     <protobuf.version>4.30.0</protobuf.version>
     <os.plugin.version>1.7.0</os.plugin.version>
     <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
+    <grpc.version>1.62.2</grpc.version>
   </properties>
 
   <dependencies>
@@ -95,6 +96,17 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.mustache</include>
+          <include>META-INF/**</include>
+          <include>templates/**</include>
+        </includes>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
@@ -103,6 +115,7 @@
         <configuration>
           <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
           <pluginId>grpc-java</pluginId>
+          <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
           <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
           <outputDirectory>${project.build.directory}/generated-sources/protobuf/java</outputDirectory>
           <clearOutputDirectory>false</clearOutputDirectory>
@@ -165,7 +178,9 @@
             <buildArg>--initialize-at-build-time=com.google.common</buildArg>
             <buildArg>--initialize-at-run-time=com.google.protobuf</buildArg>
             <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+            <buildArg>-H:ResourceConfigurationFiles=${project.basedir}/src/main/resources/META-INF/native-image/resource-config.json</buildArg>
             <buildArg>-H:ReflectionConfigurationFiles=${project.basedir}/src/main/resources/META-INF/native-image/reflection-config.json</buildArg>
+            <buildArg>-H:+AddAllCharsets</buildArg>
           </buildArgs>
           <imageName>${project.artifactId}</imageName>
           <skipNativeBuild>false</skipNativeBuild>
