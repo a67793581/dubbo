@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package test;
+
+option java_multiple_files = true;
+option java_outer_classname = "PalServiceProto";
+option java_package = "com.test";
+
+//服务
+service PalService {
+  rpc GetPet(GetPetRequest) returns (GetPetResponse);
+}
+
+//请求
+message GetPetRequest {
+}
+//响应
+message GetPetResponse {
+  string pet_id = 1;
+}
