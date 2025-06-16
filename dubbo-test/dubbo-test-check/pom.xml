@@ -30,7 +30,7 @@
     <skip_maven_deploy>true</skip_maven_deploy>
     <curator.test.version>4.2.0</curator.test.version>
     <zookeeper.version>3.7.2</zookeeper.version>
-    <curator5.version>4.2.0</curator5.version>
+    <curator5.version>4.3.0</curator5.version>
     <commons.compress.version>1.27.1</commons.compress.version>
     <commons.exec.version>1.4.0</commons.exec.version>
     <async.http.client.version>2.12.4</async.http.client.version>
@@ -95,7 +95,7 @@
       <properties>
         <curator.test.version>5.1.0</curator.test.version>
         <zookeeper.version>3.7.2</zookeeper.version>
-        <curator5.version>5.1.0</curator5.version>
+        <curator5.version>4.3.0</curator5.version>
       </properties>
     </profile>
   </profiles>
